@@ -1,0 +1,8 @@
+name: diagrams-sdl
+version: 0
+build-type: Simple
+
+library
+  exposed-modules: Diagrams.Backend.SDL
+  build-depends: base, base-unicode-symbols, SDL, SDL-gfx, SDL-ttf, diagrams-core, diagrams-lib
+  extensions: MultiParamTypeClasses, FlexibleContexts, FlexibleInstances, TypeFamilies
