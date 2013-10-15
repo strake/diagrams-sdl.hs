@@ -16,6 +16,7 @@ import Diagrams.Attributes as Diagrams;
 import Diagrams.Core.Style;
 import Diagrams.Core.Types;
 import Diagrams.Core.V;
+import Diagrams.Envelope;
 import Diagrams.Located;
 import Diagrams.Path;
 import Diagrams.Points;
@@ -47,9 +48,12 @@ instance Backend SDL R2 where {
     sdlSurface :: Surface
   };
   withStyle SDL style _ (SDLRender f) = SDLRender $ f ∘ (<> style);
-  adjustDia SDL (SDLOpts s) = (,) (SDLOpts s) ∘ sized (Dims (fromIntegral $ surfaceGetWidth s) (fromIntegral $ surfaceGetHeight s)) ∘ join (maybe id (translateX ∘ negate ∘ fst) ∘ extentX) ∘ join (maybe id (translateY ∘ negate ∘ fst) ∘ extentY);
+  adjustDia SDL (SDLOpts s) = (,) (SDLOpts s) ∘ sized ((Dims `on` fromIntegral) (surfaceGetWidth s) (surfaceGetHeight s)) ∘ join (maybe id (translate ∘ (origin .-.)) ∘ topLeft);
   doRender SDL (SDLOpts s) (SDLRender f) = f mempty s;
 };
+
+topLeft :: (Enveloped a, V a ~ R2) => a -> Maybe P2;
+topLeft = extentX &=& extentY >>> fmap (p2 ∘ join (***) fst);
 
 instance Monoid (Render SDL R2) where {
   mempty = SDLRender $ const ∘ const $ return ();
